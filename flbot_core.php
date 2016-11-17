@@ -1,6 +1,7 @@
 <?php
 
-parse_str( implode( '&', array_slice( $argv, 1 ) ), $_GET );
+//TODO move to flbot.php script and add $argv empty check
+//parse_str( implode( '&', array_slice( $argv, 1 ) ), $_GET );
 
 include 'curl.php';
 $curl = curlSetup( curl_init(), 'cookies.txt' );

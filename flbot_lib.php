@@ -1,16 +1,20 @@
 <?php
 
-$fsStyle = '<link rel="stylesheet" type="text/css" href="http://fallenlondon.storynexus.com/Content/style7.css">';
-$fsScript = '<script>var g = 0;</script>';
-
 function flPost( $url, $postDataArray, $outFile ) {
-    global $fsStyle, $fsScript, $curl;
+    global $curl;
     $resp = curlPost( $curl, $url, $postDataArray );
-    file_put_contents( $outFile, $fsStyle."\n".$fsScript.$resp );
+    umask( 0002 );
+    file_put_contents( $outFile, file_get_contents( 'head.html' ).$resp );
     return $resp;
 }
 
 $jsonCfgFile = 'bot.json';
+$outputDir = 'output/';
+$outputFileLogin = $outputDir.'login.html';
+$outputFileStoryletBegin = $outputDir.'storyletBegin.html';
+$outputFileBranchChoice = $outputDir.'branchChoice.html';
+$outputFileMyself = $outputDir.'myself.html';
+
 $cfg = json_decode( file_get_contents( $jsonCfgFile ), true );
 
 $flUrl = $cfg['flUrl'];
@@ -31,27 +35,27 @@ $storyletBeginPostData = [];
 $branchChoicePostData = [];
 
 function flLogin() {
-    global $flUrlLogin, $loginPostData;
-    return flPost( $flUrlLogin, $loginPostData, 'output_login.html' );
+    global $flUrlLogin, $loginPostData, $outputFileLogin;
+    return flPost( $flUrlLogin, $loginPostData, $outputFileLogin );
 }
 
 function flStoryletBegin( $eventid ) {
-    global $flUrlStoryletBegin, $storyletBeginPostData;
+    global $flUrlStoryletBegin, $storyletBeginPostData, $outputFileStoryletBegin;
     $storyletBeginPostData['eventid'] = $eventid;
-    return flPost( $flUrlStoryletBegin, $storyletBeginPostData, 'output_storyletBegin.html' );
-}
+    return flPost( $flUrlStoryletBegin, $storyletBeginPostData, $outputFileStoryletBegin );}
 
 function flBranchChoice( $branchId ) {
-    global $flUrlBranchChoice, $storyletBeginPostData;
+    global $flUrlBranchChoice, $storyletBeginPostData, $outputFileBranchChoice;
     $branchChoicePostData['branchId'] = $branchId;
-    return flPost( $flUrlBranchChoice, $branchChoicePostData, 'output_branchChoice.html' );
+    return flPost( $flUrlBranchChoice, $branchChoicePostData, $outputFileBranchChoice );
 }
 
 function flGetMyself() {
-    global $flUrlMyself;
-    return flPost( $flUrlMyself, [], 'output_myself.html' );
+    global $flUrlMyself, $outputFileMyself;
+    return flPost( $flUrlMyself, [], $outputFileMyself );
 }
 
+/*
 $getActionsLeftMatcherParts = [
     '<div class="actions">Actions<span class="actions_remaining"><span id="infoBarCurrentActions">',
     '</span>/',
@@ -66,7 +70,6 @@ $getActionsLeftMatcher = $getActionsLeftMatcherParts[0].'(\d*)'
                         .$getActionsLeftMatcherParts[1].'(\d*)'
                         .$getActionsLeftMatcherParts[2];
 
-/*
 function flGetActionsLeft( $respGap ) {
     preg_match( $getActionsLeftMatcher, $respGap, $matches );
     return ( count( $matches ) !== 0 ) ? $matches[1] : -1;
