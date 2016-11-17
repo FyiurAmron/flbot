@@ -1,0 +1,18 @@
+{
+    "flUrl": "fallenlondon.storynexus.com",
+    "loginPostData": {
+        "emailAddress": "example@example.com",
+        "password": "foobar"
+    },
+    "actionsLeftMin": 18,
+    "actionSequence": {
+        "1": {
+            "type": "storyletBegin",
+            "id": "11213"
+        },
+        "2": {
+            "type": "branchChoice",
+            "id": "4687"
+        }
+    }
+}
